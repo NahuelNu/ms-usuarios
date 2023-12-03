@@ -1,5 +1,7 @@
 package dan.ms.tp.msusuarios.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,5 +16,13 @@ public class ClienteService {
 
     public Cliente crear(Cliente c){
         return clienteRepo.save(c);
+    }
+
+    public Cliente buscarPorId(Integer id){
+        return clienteRepo.findById(id).orElseThrow();
+    }
+
+    public List<Cliente> buscarPorCuit(String cuit){
+        return clienteRepo.findByCuit(cuit);
     }
 }

@@ -15,7 +15,6 @@ public class Cliente {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
     private Integer id;
     
     @Column(name = "RAZON_SOCIAL")
