@@ -18,8 +18,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public ResponseEntity<Cliente> crear(Cliente c){
-        return ResponseEntity.ok().body(clienteRepo.save(c)); 
-        
+        return ResponseEntity.ok(clienteRepo.save(c)); 
     }
 
     @Override
@@ -29,6 +28,18 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override   
     public ResponseEntity<List<Cliente>> buscarPorCuit(String cuit){
-        return ResponseEntity.ok().body(clienteRepo.findByCuit(cuit));
+        return ResponseEntity.ok(clienteRepo.findByCuit(cuit));
+    }
+
+    @Override
+    public ResponseEntity<Cliente> borrar(Integer id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'borrar'");
+    }
+
+    @Override
+    public ResponseEntity<Cliente> modificar(Integer id, Cliente c) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'modificar'");
     }
 }
