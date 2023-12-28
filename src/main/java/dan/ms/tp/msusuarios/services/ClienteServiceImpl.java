@@ -3,6 +3,7 @@ package dan.ms.tp.msusuarios.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import dan.ms.tp.msusuarios.dao.ClienteJpaRepository;
@@ -14,15 +15,20 @@ public class ClienteServiceImpl implements ClienteService {
     @Autowired
     ClienteJpaRepository clienteRepo;
 
-    public Cliente crear(Cliente c){
-        return clienteRepo.save(c);
+
+    @Override
+    public ResponseEntity<Cliente> crear(Cliente c){
+        return ResponseEntity.ok().body(clienteRepo.save(c)); 
+        
     }
 
-    public Cliente buscarPorId(Integer id){
-        return clienteRepo.findById(id).orElseThrow();
+    @Override
+    public ResponseEntity<Cliente> buscarPorId(Integer id){
+        return ResponseEntity.of(clienteRepo.findById(id));
     }
 
-    public List<Cliente> buscarPorCuit(String cuit){
-        return clienteRepo.findByCuit(cuit);
+    @Override   
+    public ResponseEntity<List<Cliente>> buscarPorCuit(String cuit){
+        return ResponseEntity.ok().body(clienteRepo.findByCuit(cuit));
     }
 }

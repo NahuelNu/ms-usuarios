@@ -3,6 +3,7 @@ package dan.ms.tp.msusuarios.rest;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,17 +27,17 @@ public class ClienteController {
     ClienteService clienteServ;
 
     @PostMapping()
-    public Cliente guardarCliente(@RequestBody Cliente entytyCliente) {
+    public ResponseEntity<Cliente> guardarCliente(@RequestBody Cliente entytyCliente) {
         return clienteServ.crear(entytyCliente);
     }
 
     @GetMapping(value="/{id}")
-    public Cliente buscarClientePorId(@PathVariable Integer id) {
+    public ResponseEntity<Cliente> buscarClientePorId(@PathVariable Integer id) {
         return clienteServ.buscarPorId(id);
     }
 
     @GetMapping()
-    public List<Cliente> buscarClientePorCuit(@RequestParam String cuit) {
+    public ResponseEntity<List<Cliente>> buscarClientePorCuit(@RequestParam String cuit) {
         return clienteServ.buscarPorCuit(cuit);
     }
     

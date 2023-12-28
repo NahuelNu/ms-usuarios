@@ -2,12 +2,14 @@ package dan.ms.tp.msusuarios.services;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 import dan.ms.tp.msusuarios.modelo.Cliente;
 
 public interface ClienteService {
-        public Cliente crear(Cliente c);
-        public Cliente buscarPorId(Integer id);
-            public List<Cliente> buscarPorCuit(String cuit);
+        public ResponseEntity<Cliente> crear(Cliente c);
+        public ResponseEntity<Cliente> buscarPorId(Integer id);
+        public ResponseEntity<List<Cliente>> buscarPorCuit(String cuit);
 
 
 }
