@@ -17,8 +17,22 @@ public class UsuarioServiceImpl implements UsuarioService {
     UsuarioJpaRepository usuarioRepo;
 
     @Override
-    public ResponseEntity<Usuario> crear(Usuario u) {
-        return ResponseEntity.ok(usuarioRepo.save(u));
+    public ResponseEntity<?> crear(Usuario usuario) {
+        List<Usuario> usuarios = usuarioRepo.findAll();
+
+
+        if (usuario.getTipoUsuario().getId().equals(1)) {
+            List<Usuario> usuariosFiltrados = usuarios.stream().filter(u->u.getCliente().getId().equals(usuario.getCliente().getId())).toList();
+
+            Boolean existeAdmin = usuariosFiltrados.stream().anyMatch(u->"ADMIN".equals(u.getTipoUsuario().getTipo()));
+
+            if (!existeAdmin) {
+                return ResponseEntity.ok(usuarioRepo.save(usuario));
+            }
+            // Cómo enviar error personalizado en JSON?
+            else return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
+            }
+        else return ResponseEntity.ok(usuarioRepo.save(usuario));
     }
 
     @Override
