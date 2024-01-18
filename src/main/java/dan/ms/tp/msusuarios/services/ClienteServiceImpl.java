@@ -1,6 +1,7 @@
 package dan.ms.tp.msusuarios.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import dan.ms.tp.msusuarios.dao.ClienteJpaRepository;
 import dan.ms.tp.msusuarios.modelo.Cliente;
+import dan.ms.tp.msusuarios.modelo.Usuario;
 
 @Service
 public class ClienteServiceImpl implements ClienteService {
@@ -33,8 +35,11 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public ResponseEntity<Cliente> borrar(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'borrar'");
+        Optional<Cliente> c = clienteRepo.findById(id);
+        if(c.isPresent()){
+            clienteRepo.delete(c.get());
+        } 
+        return ResponseEntity.of(c);
     }
 
     @Override

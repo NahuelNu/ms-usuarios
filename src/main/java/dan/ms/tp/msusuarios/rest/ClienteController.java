@@ -14,6 +14,7 @@ import dan.ms.tp.msusuarios.services.ClienteService;
 
 
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -40,8 +41,13 @@ public class ClienteController {
     public ResponseEntity<List<Cliente>> buscarClientePorCuit(@RequestParam String cuit) {
         return clienteServ.buscarPorCuit(cuit);
     }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Cliente> borrarClientePorId(@PathVariable Integer id){
+        return clienteServ.borrar(id);
+    }
     
-    //Falta Put y Patch
+    //Falta Put, Patch
     
     
 }
