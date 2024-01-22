@@ -39,13 +39,13 @@ public class ClienteController {
         return clienteServ.crear(entityCliente);
     }
 
-    @GetMapping(value="/{id}")
+    @GetMapping(value="/id/{id}")
     public ResponseEntity<Cliente> buscarClientePorId(@PathVariable Integer id) {
         System.out.println(id);
         return clienteServ.buscarPorId(id);
     }
 
-    @GetMapping("/{cuit}")
+    @GetMapping("/cuit/{cuit}")
     public ResponseEntity<List<Cliente>> buscarClientePorCuit(@RequestParam String cuit) {
         return clienteServ.buscarPorCuit(cuit);
     }
@@ -63,7 +63,6 @@ public class ClienteController {
         return clienteServ.borrar(id);
     } 
     
-    //Falta Put y Patch
     
 
     @RequestMapping(

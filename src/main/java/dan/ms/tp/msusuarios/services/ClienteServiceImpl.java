@@ -72,6 +72,7 @@ public class ClienteServiceImpl implements ClienteService {
             updateResponse.setCuit(c.getCuit());
             updateResponse.setHabilitadoOnline(c.getHabilitadoOnline());
             updateResponse.setMaximoCuentaCorriente(c.getMaximoCuentaCorriente());
+            clienteRepo.save(updateResponse);
             return ResponseEntity.ok(updateResponse);
         }
     }
