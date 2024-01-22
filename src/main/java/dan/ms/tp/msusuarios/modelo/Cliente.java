@@ -1,16 +1,25 @@
 package dan.ms.tp.msusuarios.modelo;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "USR_CLIENTES")
 @Data
+@Entity
+@Table(name = "USR_CLIENTES", schema = "dan")
+@JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Cliente {
     
     @Id
@@ -20,6 +29,7 @@ public class Cliente {
     @Column(name = "RAZON_SOCIAL")
     private String razonSocial;
     
+    @Column(name = "CUIT")
     private String cuit;
 
     @Column(name = "CORREO_ELECTRONICO")
@@ -30,4 +40,6 @@ public class Cliente {
 
     @Column(name = "HABILITADO_ONLINE")
     private Boolean habilitadoOnline;
+
+    
 }
