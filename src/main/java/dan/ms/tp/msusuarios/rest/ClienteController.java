@@ -39,7 +39,7 @@ public class ClienteController {
         return clienteServ.crear(entityCliente);
     }
 
-    @GetMapping(value="/id/{id}")
+    @GetMapping(value="/getById/{id}")
     public ResponseEntity<Cliente> buscarClientePorId(@PathVariable Integer id) {
         System.out.println(id);
         return clienteServ.buscarPorId(id);
@@ -66,7 +66,7 @@ public class ClienteController {
     
 
     @RequestMapping(
-        value = "/up/{id}",
+        value = "/update/{id}",
         method={RequestMethod.GET,RequestMethod.PUT},
         produces = "application/json")
     public ResponseEntity<Cliente> reemplazar(@PathVariable Integer id, 

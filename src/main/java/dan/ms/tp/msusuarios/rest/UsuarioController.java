@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 
 
 @RestController
@@ -45,5 +47,17 @@ public class UsuarioController {
     }
 
     //Falta Put y Patch
+
+   @RequestMapping(
+        value = "/update/{id}",
+        method={RequestMethod.GET,RequestMethod.PUT},
+        produces = "application/json")
+    public ResponseEntity<?> reemplazar(@PathVariable Integer id, 
+    @RequestBody Usuario usuario) {
+        //TODO: process PUT request
+        
+        return usuarioService.modificar(id, usuario);
+    } 
+    
     
 }
