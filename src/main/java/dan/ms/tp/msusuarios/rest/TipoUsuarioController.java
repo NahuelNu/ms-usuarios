@@ -13,7 +13,9 @@ import dan.ms.tp.msusuarios.modelo.TipoUsuario;
 @RestController
 @RequestMapping("api/tipo-usuario")
 public class TipoUsuarioController {
- 
+    
+    //Sin Service, es buena práctica?
+    
     @Autowired
     TipoUsuarioJpaRepository tipoUsrRepo;
 
