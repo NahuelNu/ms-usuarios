@@ -13,7 +13,11 @@ public interface ClienteService {
         public ResponseEntity<List<Cliente>> buscarPorCuit(String cuit);
         public ResponseEntity<List<Cliente>> buscarTodos();
 
-        //No implementados
+        
         public ResponseEntity<Optional<Cliente>> borrar(Integer id);
         public ResponseEntity<Cliente> modificar(Integer id, Cliente c);
+
+        //Implementear
+
+        public ResponseEntity<Double> getCtaCte(Integer id);
 }

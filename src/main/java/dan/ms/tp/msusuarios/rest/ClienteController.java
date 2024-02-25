@@ -75,5 +75,11 @@ public class ClienteController {
         
         return clienteServ.modificar(id, cliente);
     }
+
+    @GetMapping("/ctaCte/{id}")
+    public ResponseEntity<Double> getCuentaCorriente(@PathVariable Integer id) {
+        return clienteServ.getCtaCte(id);
+    }
+    
     
 }

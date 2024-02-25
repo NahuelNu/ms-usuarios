@@ -81,4 +81,8 @@ public class ClienteServiceImpl implements ClienteService {
 
         return ResponseEntity.ok(clienteRepo.findAll());
     }
+
+    public ResponseEntity<Double> getCtaCte(Integer id){
+        return ResponseEntity.ok(clienteRepo.findById(id).get().getMaximoCuentaCorriente());
+    }
 }
