@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import dan.ms.tp.msusuarios.dao.ClienteJpaRepository;
 import dan.ms.tp.msusuarios.modelo.Cliente;
-import dan.ms.tp.msusuarios.modelo.Usuario;
 
 @Service
 public class ClienteServiceImpl implements ClienteService {
