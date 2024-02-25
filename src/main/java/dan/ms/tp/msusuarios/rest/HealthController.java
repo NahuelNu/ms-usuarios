@@ -22,7 +22,7 @@ public class HealthController {
         // Get the server name
         Map<String,String> res = new LinkedHashMap<>();
         res.put("serverName",request.getServerName());
-        res.put("app","ms-pedidos");
+        res.put("app","ms-usuarios");
         res.put("status","OK");
         res.put("timestamp",Instant.now().toString());
         try {
