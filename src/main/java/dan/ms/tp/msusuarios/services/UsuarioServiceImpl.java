@@ -2,12 +2,14 @@ package dan.ms.tp.msusuarios.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import dan.ms.tp.msusuarios.dao.UsuarioJpaRepository;
-import dan.ms.tp.msusuarios.modelo.Cliente;
 import dan.ms.tp.msusuarios.modelo.Usuario;
 
 @Service
@@ -15,24 +17,30 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     UsuarioJpaRepository usuarioRepo;
+    private final Integer MIN_PASS_LENGHT = 12;
+    private final String PASS_ERROR_MSG = "La contraseña debe tener una longitud mínima de 12 caracteres, una minúscula, una mayúscula y un caracter especial";
 
     @Override
     public ResponseEntity<?> crear(Usuario usuario) {
-        List<Usuario> usuarios = usuarioRepo.findAll();
 
-
-        if (usuario.getTipoUsuario().getId().equals(1)) {
+        Boolean passValida = validatePassword(usuario.getPassword());
+        
+        if (usuario.getTipoUsuario().getId().equals(1) && passValida) {
+            
+            List<Usuario> usuarios = usuarioRepo.findAll();
             List<Usuario> usuariosFiltrados = usuarios.stream().filter(u->u.getCliente().getId().equals(usuario.getCliente().getId())).toList();
 
             Boolean existeAdmin = usuariosFiltrados.stream().anyMatch(u->"ADMIN".equals(u.getTipoUsuario().getTipo()));
 
-            if (!existeAdmin) {
-                return ResponseEntity.ok(usuarioRepo.save(usuario));
+            if (existeAdmin) {
+                // Cómo enviar error personalizado en JSON?
+                return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
             }
-            // Cómo enviar error personalizado en JSON?
-            else return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
-            }
-        else return ResponseEntity.ok(usuarioRepo.save(usuario));
+        }
+        
+        if(!passValida)
+            return ResponseEntity.badRequest().body(PASS_ERROR_MSG);
+        return ResponseEntity.ok(usuarioRepo.save(usuario));
     }
 
     @Override
@@ -45,6 +53,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         Optional<Usuario> u = usuarioRepo.findById(id);
         if(u.isPresent()){
             usuarioRepo.delete(u.get());
+        }
+        else{
+            return ResponseEntity.notFound().build();
         } 
         return ResponseEntity.of(u);
     }
@@ -62,9 +73,53 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public ResponseEntity<Usuario> modificar(Integer id, Cliente c) {
+    public ResponseEntity<?> modificar(Integer id, Usuario u) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'modificar'");
+        //throw new UnsupportedOperationException("Unimplemented method 'modificar'");
+        Optional<Usuario> usuario = usuarioRepo.findById(id);
+
+        if(usuario.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        else{
+
+            if(!validatePassword(u.getPassword())){
+                return ResponseEntity.badRequest().body(PASS_ERROR_MSG);
+            }
+            
+            Usuario updateResponse = usuarioRepo.findById(id).get();
+            updateResponse.setCorreoElectronico(u.getCorreoElectronico());
+            updateResponse.setPassword(u.getPassword());
+            updateResponse.setUserName(u.getUserName());
+            updateResponse.setTipoUsuario(u.getTipoUsuario());
+            updateResponse.setCliente(u.getCliente());
+            usuarioRepo.save(updateResponse);
+            return ResponseEntity.ok(updateResponse);
+        }
+    }
+
+    private Boolean validatePassword(String pass){
+
+        if(pass.length()>=MIN_PASS_LENGHT){
+
+        Pattern minuscula = Pattern.compile("[a-z]");
+        Pattern mayuscula = Pattern.compile("[A-Z]"); 
+        Pattern digito = Pattern.compile("[0-9]");
+        Pattern especial = Pattern.compile ("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
+        //Pattern eight = Pattern.compile (".{8}");
+
+
+           Matcher tieneMin = minuscula.matcher(pass);
+           Matcher tieneMayus = mayuscula.matcher(pass);
+           Matcher tieneDigito = digito.matcher(pass);
+           Matcher tieneEspecial = especial.matcher(pass);
+
+           return tieneMin.find() && tieneMayus.find() && tieneEspecial.find()
+           && tieneDigito.find();
+
+    }
+    else
+        return false;
     }
 
     
