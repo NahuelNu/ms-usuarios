@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dan.ms.tp.msusuarios.modelo.Cliente;
 import dan.ms.tp.msusuarios.services.ClienteService;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,42 +30,46 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 
 @RestController
+@Validated
 @RequestMapping("api/cliente")
 public class ClienteController {
     
     @Autowired
     ClienteService clienteServ;
 
-    @PostMapping()
-    public ResponseEntity<Cliente> guardarCliente(@Validated @RequestBody Cliente entityCliente) {
-        return clienteServ.crear(entityCliente);
-    }
-
-    @GetMapping(value="/getById/{id}")
-    public ResponseEntity<Cliente> buscarClientePorId(@PathVariable Integer id) {
-        System.out.println(id);
-        return clienteServ.buscarPorId(id);
-    }
-
-    @GetMapping("/cuit/{cuit}")
-    public ResponseEntity<List<Cliente>> buscarClientePorCuit(@RequestParam String cuit) {
-        return clienteServ.buscarPorCuit(cuit);
-    }
-
     @GetMapping()
     public ResponseEntity<List<Cliente>> getAllClientes() {
         return clienteServ.buscarTodos();
     }
     
-    @RequestMapping(
-        value = "/del/{id}",
-        method={RequestMethod.DELETE,RequestMethod.GET},
-        produces = "application/json")
-    public ResponseEntity<Optional<Cliente>> eliminarCliente(@PathVariable Integer id) {
+//     @RequestMapping(
+//         value = "/del/{id}",
+//         method={RequestMethod.DELETE,RequestMethod.GET},
+//         produces = "application/json")
+//     public ResponseEntity<Optional<Cliente>> eliminarCliente(@PathVariable Integer id) {
+//         return clienteServ.borrar(id);
+//     } 
+ 
+    @PostMapping()
+    public ResponseEntity<Cliente> guardarCliente(@RequestBody @Valid Cliente entytyCliente) {
+        return clienteServ.crear(entytyCliente);
+    }
+
+    @GetMapping(value="/{id}")
+    public ResponseEntity<Cliente> buscarClientePorId(@PathVariable @Min(1) Integer id) {
+        return clienteServ.buscarPorId(id);
+    }
+
+    
+    @GetMapping()
+    public ResponseEntity<List<Cliente>> buscarClientePorCuit(@RequestParam @NotBlank String cuit) {
+        return clienteServ.buscarPorCuit(cuit);
+    }
+  
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Cliente> borrarClientePorId(@PathVariable @Min(1) Integer id){
         return clienteServ.borrar(id);
-    } 
-    
-    
+    }
 
     @RequestMapping(
         value = "/update/{id}",

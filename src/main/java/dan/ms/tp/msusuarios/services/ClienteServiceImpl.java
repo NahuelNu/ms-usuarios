@@ -38,20 +38,12 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public ResponseEntity<Optional<Cliente>> borrar(Integer id) {
-        // TODO Auto-generated method stub
-        //throw new UnsupportedOperationException("Unimplemented method 'borrar'");
-
-        Optional<Cliente> cli = clienteRepo.findById(id);
-
-        if(cli.isEmpty()){
-
-            return ResponseEntity.notFound().build();
-        }
-        else{
-            clienteRepo.deleteById(id);
-            return ResponseEntity.ok(cli);
-        }
+    public ResponseEntity<Cliente> borrar(Integer id) {
+        Optional<Cliente> c = clienteRepo.findById(id);
+        if(c.isPresent()){
+            clienteRepo.delete(c.get());
+        } 
+        return ResponseEntity.of(c);
     }
 
     @Override
