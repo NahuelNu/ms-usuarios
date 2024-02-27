@@ -2,7 +2,6 @@ package dan.ms.tp.msusuarios.services;
 
 import java.util.List;
 import org.springframework.http.ResponseEntity;
-import dan.ms.tp.msusuarios.modelo.Cliente;
 import dan.ms.tp.msusuarios.modelo.Usuario;
 
 

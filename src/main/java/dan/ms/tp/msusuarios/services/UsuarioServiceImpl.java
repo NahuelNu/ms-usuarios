@@ -27,13 +27,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         
         if (usuario.getTipoUsuario().getId().equals(1) && passValida) {
             
-            List<Usuario> usuarios = usuarioRepo.findAll();
-            List<Usuario> usuariosFiltrados = usuarios.stream().filter(u->u.getCliente().getId().equals(usuario.getCliente().getId())).toList();
-
-            Boolean existeAdmin = usuariosFiltrados.stream().anyMatch(u->"ADMIN".equals(u.getTipoUsuario().getTipo()));
-
+            Boolean existeAdmin = existeadmin(usuario.getCliente().getId());
             if (existeAdmin) {
-                // Cómo enviar error personalizado en JSON?
+                // Cómo enviar error personalizado?
                 return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
             }
         }
@@ -74,17 +70,22 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public ResponseEntity<?> modificar(Integer id, Usuario u) {
-        // TODO Auto-generated method stub
-        //throw new UnsupportedOperationException("Unimplemented method 'modificar'");
         Optional<Usuario> usuario = usuarioRepo.findById(id);
 
         if(usuario.isEmpty()){
             return ResponseEntity.notFound().build();
         }
         else{
-
             if(!validatePassword(u.getPassword())){
                 return ResponseEntity.badRequest().body(PASS_ERROR_MSG);
+            }
+            
+            if(u.getTipoUsuario().getId().equals(1)){
+                Boolean existeAdmin = existeadmin(u.getCliente().getId());
+                if (existeAdmin) {
+                    // Cómo enviar error personalizado?
+                    return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
+                }
             }
             
             Usuario updateResponse = usuarioRepo.findById(id).get();
@@ -92,10 +93,15 @@ public class UsuarioServiceImpl implements UsuarioService {
             updateResponse.setPassword(u.getPassword());
             updateResponse.setUserName(u.getUserName());
             updateResponse.setTipoUsuario(u.getTipoUsuario());
-            updateResponse.setCliente(u.getCliente());
             usuarioRepo.save(updateResponse);
             return ResponseEntity.ok(updateResponse);
         }
+    }
+
+    private Boolean existeadmin(Integer idCliente) {
+        List<Usuario> usuarios = usuarioRepo.findAll();
+        List<Usuario> usuariosFiltrados = usuarios.stream().filter(u->u.getCliente().getId().equals(idCliente)).toList();
+        return usuariosFiltrados.stream().anyMatch(u->"ADMIN".equals(u.getTipoUsuario().getTipo()));
     }
 
     private Boolean validatePassword(String pass){
