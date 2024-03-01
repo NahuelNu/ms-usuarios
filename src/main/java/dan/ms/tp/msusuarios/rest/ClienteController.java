@@ -63,7 +63,7 @@ public class ClienteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> reemplazar(@PathVariable Integer id, 
-                                                @RequestBody Cliente cliente) {
+                                                @RequestBody @Valid Cliente cliente) {
         return clienteServ.modificar(id, cliente);
     }
 

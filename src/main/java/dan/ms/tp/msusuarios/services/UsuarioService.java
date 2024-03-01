@@ -11,7 +11,5 @@ public interface UsuarioService {
     public ResponseEntity<Usuario> buscarPorId(Integer id);
     public ResponseEntity<List<Usuario>> buscarPorClienteId(Integer idCliente);
     public ResponseEntity<List<Usuario>> buscarPorTipoYUsuario(Integer idCliente, Integer idTipo);
-
-    //No implementados
     public ResponseEntity<?> modificar(Integer id, Usuario u);
 }

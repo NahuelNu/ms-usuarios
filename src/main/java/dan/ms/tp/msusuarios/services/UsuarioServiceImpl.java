@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import dan.ms.tp.msusuarios.dao.ClienteJpaRepository;
 import dan.ms.tp.msusuarios.dao.UsuarioJpaRepository;
 import dan.ms.tp.msusuarios.modelo.Usuario;
 
@@ -17,11 +18,18 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     UsuarioJpaRepository usuarioRepo;
+    @Autowired
+    ClienteJpaRepository clienteRepo;
+
     private final Integer MIN_PASS_LENGHT = 12;
     private final String PASS_ERROR_MSG = "La contraseña debe tener una longitud mínima de 12 caracteres, una minúscula, una mayúscula y un caracter especial";
 
     @Override
     public ResponseEntity<?> crear(Usuario usuario) {
+
+        // Validar que cliente al que se quiera asociar usuario exista en la bd
+        if(!clienteRepo.findById(usuario.getCliente().getId()).isPresent())
+            return ResponseEntity.badRequest().body("Id Cliente no existente");
 
         Boolean passValida = validatePassword(usuario.getPassword());
         
@@ -81,11 +89,13 @@ public class UsuarioServiceImpl implements UsuarioService {
             }
             
             if(u.getTipoUsuario().getId().equals(1)){
+                // Chequear si el id del cliente enviado es el mismo de la base de datos.
+                // Si no es el mismo lanzar error
+                if(!usuario.get().getCliente().getId().equals(u.getCliente().getId())) 
+                    return ResponseEntity.badRequest().body("Id Cliente no coincide");
                 Boolean existeAdmin = existeadmin(u.getCliente().getId());
-                if (existeAdmin) {
-                    // Cómo enviar error personalizado?
+                if (existeAdmin) 
                     return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
-                }
             }
             
             Usuario updateResponse = usuarioRepo.findById(id).get();
