@@ -88,7 +88,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 return ResponseEntity.badRequest().body(PASS_ERROR_MSG);
             }
             
-            if(usuario.get().getCliente().getId().equals(1)){
+            if(u.getTipoUsuario().getId().equals(1)){
                 Boolean existeAdmin = existeadmin(usuario.get().getCliente().getId());
                 if (existeAdmin) 
                     return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
