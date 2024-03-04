@@ -88,12 +88,8 @@ public class UsuarioServiceImpl implements UsuarioService {
                 return ResponseEntity.badRequest().body(PASS_ERROR_MSG);
             }
             
-            if(u.getTipoUsuario().getId().equals(1)){
-                // Chequear si el id del cliente enviado es el mismo de la base de datos.
-                // Si no es el mismo lanzar error
-                if(!usuario.get().getCliente().getId().equals(u.getCliente().getId())) 
-                    return ResponseEntity.badRequest().body("Id Cliente no coincide");
-                Boolean existeAdmin = existeadmin(u.getCliente().getId());
+            if(usuario.get().getCliente().getId().equals(1)){
+                Boolean existeAdmin = existeadmin(usuario.get().getCliente().getId());
                 if (existeAdmin) 
                     return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
             }
