@@ -51,14 +51,13 @@ public class ClienteServiceImpl implements ClienteService {
         }
         else{
             
-            Cliente updateResponse = clienteRepo.findById(id).get();
+            Cliente updateResponse = cli.get();
             updateResponse.setRazonSocial(c.getRazonSocial());
             updateResponse.setCorreoElectronico(c.getCorreoElectronico());
             updateResponse.setCuit(c.getCuit());
             updateResponse.setHabilitadoOnline(c.getHabilitadoOnline());
             updateResponse.setMaximoCuentaCorriente(c.getMaximoCuentaCorriente());
-            clienteRepo.save(updateResponse);
-            return ResponseEntity.ok(updateResponse);
+            return ResponseEntity.ok(clienteRepo.save(updateResponse));
         }
     }
 

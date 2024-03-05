@@ -94,13 +94,12 @@ public class UsuarioServiceImpl implements UsuarioService {
                     return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
             }
             
-            Usuario updateResponse = usuarioRepo.findById(id).get();
+            Usuario updateResponse = usuario.get();
             updateResponse.setCorreoElectronico(u.getCorreoElectronico());
             updateResponse.setPassword(u.getPassword());
             updateResponse.setUserName(u.getUserName());
             updateResponse.setTipoUsuario(u.getTipoUsuario());
-            usuarioRepo.save(updateResponse);
-            return ResponseEntity.ok(updateResponse);
+            return ResponseEntity.ok(usuarioRepo.save(updateResponse));
         }
     }
 
