@@ -12,7 +12,8 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,14 +35,15 @@ public class Cliente {
     private String razonSocial;
     
     @Column(name = "CUIT")
-    @NotNull
+    @NotBlank(message = "Cuit vacío")
     private String cuit;
 
-    @NotNull
-    @Email
+    @NotBlank(message = "Email vacío")
+    @Email(message = "Formato de email incorrecto")
     @Column(name = "CORREO_ELECTRONICO")
     private String correoElectronico;
     
+    @Min(value = 0,message = "El máximo de cuenta corriente debe ser 0 o más")
     @Column(name = "MAX_CTA_CTE")
     private Double maximoCuentaCorriente;
 

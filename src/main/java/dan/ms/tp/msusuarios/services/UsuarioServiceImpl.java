@@ -26,24 +26,29 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public ResponseEntity<?> crear(Usuario usuario) {
-
+        
+        // Falta que primero se valide que no sea null
         // Validar que cliente al que se quiera asociar usuario exista en la bd
         if(!clienteRepo.findById(usuario.getCliente().getId()).isPresent())
+            // Ver si lanzar excepción
             return ResponseEntity.badRequest().body("Id Cliente no existente");
 
         Boolean passValida = validatePassword(usuario.getPassword());
-        
-        if (usuario.getTipoUsuario().getId().equals(1) && passValida) {
+    
+        if(!passValida)
+            // Ver si lanzar excepción
+            return ResponseEntity.badRequest().body(PASS_ERROR_MSG);
+
+        if (usuario.getTipoUsuario().getId().equals(1)) {
             
             Boolean existeAdmin = existeadmin(usuario.getCliente().getId());
             if (existeAdmin) {
-                // Cómo enviar error personalizado?
+                // Ver si lanzar excepción
                 return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
             }
         }
         
-        if(!passValida)
-            return ResponseEntity.badRequest().body(PASS_ERROR_MSG);
+        
         return ResponseEntity.ok(usuarioRepo.save(usuario));
     }
 
@@ -85,12 +90,14 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         else{
             if(!validatePassword(u.getPassword())){
+                // Ver si lanzar excepción
                 return ResponseEntity.badRequest().body(PASS_ERROR_MSG);
             }
             
             if(u.getTipoUsuario().getId().equals(1)){
                 Boolean existeAdmin = existeadmin(usuario.get().getCliente().getId());
                 if (existeAdmin) 
+                    // Ver si lanzar excepción
                     return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
             }
             
