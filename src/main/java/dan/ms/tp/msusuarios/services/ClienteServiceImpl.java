@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import dan.ms.tp.msusuarios.dao.ClienteJpaRepository;
+import dan.ms.tp.msusuarios.exception.NotFoundException;
 import dan.ms.tp.msusuarios.modelo.Cliente;
 
 @Service
@@ -23,9 +24,10 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public ResponseEntity<Cliente> buscarPorId(Integer id){
-        System.out.println(id);
-        return ResponseEntity.of(clienteRepo.findById(id));
+    public ResponseEntity<Cliente> buscarPorId(Integer id) throws NotFoundException{
+        Optional<Cliente> cliente = clienteRepo.findById(id);
+        if(!cliente.isPresent()) throw new NotFoundException("Cliente",id);
+        return ResponseEntity.ok(cliente.get());
     }
 
     @Override   
