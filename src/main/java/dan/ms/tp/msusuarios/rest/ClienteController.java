@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import dan.ms.tp.msusuarios.exception.NotFoundException;
 import dan.ms.tp.msusuarios.modelo.Cliente;
 import dan.ms.tp.msusuarios.services.ClienteService;
 import jakarta.validation.Valid;
@@ -43,7 +44,7 @@ public class ClienteController {
     }
 
     @GetMapping(value="/{id}")
-    public ResponseEntity<Cliente> buscarClientePorId(@PathVariable @Min(1) Integer id) {
+    public ResponseEntity<Cliente> buscarClientePorId(@PathVariable @Min(1) Integer id) throws NotFoundException{
         return clienteServ.buscarPorId(id);
     }
 

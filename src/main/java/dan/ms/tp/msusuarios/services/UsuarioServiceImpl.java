@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import dan.ms.tp.msusuarios.dao.ClienteJpaRepository;
 import dan.ms.tp.msusuarios.dao.UsuarioJpaRepository;
+import dan.ms.tp.msusuarios.exception.NotFoundException;
+
 import dan.ms.tp.msusuarios.modelo.Usuario;
 
 @Service
@@ -27,41 +29,50 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public ResponseEntity<?> crear(Usuario usuario) {
 
+        Integer clienteId = usuario.getCliente().getId();
+        // Ver si lanzar excepción personalizada
+        if(clienteId ==null) return ResponseEntity.badRequest().body("Id Cliente nulo");
+
+        Integer tipoUsuarioId = usuario.getTipoUsuario().getId();
+        // Ver si lanzar excepción personalizada
+        if(tipoUsuarioId ==null) return ResponseEntity.badRequest().body("Id Tipo Usuario nulo");
+
         // Validar que cliente al que se quiera asociar usuario exista en la bd
-        if(!clienteRepo.findById(usuario.getCliente().getId()).isPresent())
-            return ResponseEntity.badRequest().body("Id Cliente no existente");
+        if(!clienteRepo.findById(clienteId).isPresent())
+            throw new NotFoundException("Cliente",clienteId);
 
         Boolean passValida = validatePassword(usuario.getPassword());
-        
-        if (usuario.getTipoUsuario().getId().equals(1) && passValida) {
+    
+        if(!passValida)
+            // Ver si lanzar excepción personalizada
+            return ResponseEntity.badRequest().body(PASS_ERROR_MSG);
+
+        if (usuario.getTipoUsuario().getId().equals(1)) {
             
-            Boolean existeAdmin = existeadmin(usuario.getCliente().getId());
+            Boolean existeAdmin = existeAdmin(usuario.getCliente().getId());
             if (existeAdmin) {
-                // Cómo enviar error personalizado?
+                // Ver si lanzar excepción personalizada
                 return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
             }
         }
         
-        if(!passValida)
-            return ResponseEntity.badRequest().body(PASS_ERROR_MSG);
         return ResponseEntity.ok(usuarioRepo.save(usuario));
     }
 
     @Override
     public ResponseEntity<Usuario> buscarPorId(Integer id) {
-        return ResponseEntity.of(usuarioRepo.findById(id));
+        Optional<Usuario> usuario = usuarioRepo.findById(id);
+        if(!usuario.isPresent()) throw new NotFoundException("Usuario",id);
+        return ResponseEntity.ok(usuario.get());
     }
 
     @Override
     public ResponseEntity<Usuario> borrar(Integer id) {
-        Optional<Usuario> u = usuarioRepo.findById(id);
-        if(u.isPresent()){
-            usuarioRepo.delete(u.get());
-        }
-        else{
-            return ResponseEntity.notFound().build();
-        } 
-        return ResponseEntity.of(u);
+        Optional<Usuario> usuario = usuarioRepo.findById(id);
+        if(!usuario.isPresent()) throw new NotFoundException("Usuario",id);
+        
+        usuarioRepo.delete(usuario.get());
+        return ResponseEntity.ok(usuario.get());
     }
 
     @Override
@@ -80,30 +91,33 @@ public class UsuarioServiceImpl implements UsuarioService {
     public ResponseEntity<?> modificar(Integer id, Usuario u) {
         Optional<Usuario> usuario = usuarioRepo.findById(id);
 
-        if(usuario.isEmpty()){
-            return ResponseEntity.notFound().build();
+        if(!usuario.isPresent()) throw new NotFoundException("Usuario",id);
+
+        if(!validatePassword(u.getPassword())){
+            // Ver si lanzar excepción personalizada
+            return ResponseEntity.badRequest().body(PASS_ERROR_MSG);
         }
-        else{
-            if(!validatePassword(u.getPassword())){
-                return ResponseEntity.badRequest().body(PASS_ERROR_MSG);
-            }
-            
-            if(u.getTipoUsuario().getId().equals(1)){
-                Boolean existeAdmin = existeadmin(usuario.get().getCliente().getId());
-                if (existeAdmin) 
-                    return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
-            }
-            
-            Usuario updateResponse = usuario.get();
-            updateResponse.setCorreoElectronico(u.getCorreoElectronico());
-            updateResponse.setPassword(u.getPassword());
-            updateResponse.setUserName(u.getUserName());
-            updateResponse.setTipoUsuario(u.getTipoUsuario());
-            return ResponseEntity.ok(usuarioRepo.save(updateResponse));
+        
+        Integer tipoUsuarioId = u.getTipoUsuario().getId();
+        // Ver si lanzar excepción personalizada
+        if(tipoUsuarioId ==null) return ResponseEntity.badRequest().body("Id Tipo Usuario nulo");
+
+        if(u.getTipoUsuario().getId().equals(1)){
+            Boolean existeAdmin = existeAdmin(usuario.get().getCliente().getId());
+            if (existeAdmin) 
+                // Ver si lanzar excepción personalizada
+                return ResponseEntity.badRequest().body("Cliente ya tiene asociado un usuario tipo ADMIN");
         }
+        
+        Usuario updateResponse = usuario.get();
+        updateResponse.setCorreoElectronico(u.getCorreoElectronico());
+        updateResponse.setPassword(u.getPassword());
+        updateResponse.setUserName(u.getUserName());
+        updateResponse.setTipoUsuario(u.getTipoUsuario());
+        return ResponseEntity.ok(usuarioRepo.save(updateResponse));
     }
 
-    private Boolean existeadmin(Integer idCliente) {
+    private Boolean existeAdmin(Integer idCliente) {
         List<Usuario> usuarios = usuarioRepo.findAll();
         List<Usuario> usuariosFiltrados = usuarios.stream().filter(u->u.getCliente().getId().equals(idCliente)).toList();
         return usuariosFiltrados.stream().anyMatch(u->"ADMIN".equals(u.getTipoUsuario().getTipo()));

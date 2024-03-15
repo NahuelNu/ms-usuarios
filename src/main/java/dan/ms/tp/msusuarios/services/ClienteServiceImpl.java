@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import dan.ms.tp.msusuarios.dao.ClienteJpaRepository;
+import dan.ms.tp.msusuarios.exception.NotFoundException;
 import dan.ms.tp.msusuarios.modelo.Cliente;
 
 @Service
@@ -23,9 +24,10 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public ResponseEntity<Cliente> buscarPorId(Integer id){
-        System.out.println(id);
-        return ResponseEntity.of(clienteRepo.findById(id));
+    public ResponseEntity<Cliente> buscarPorId(Integer id) throws NotFoundException{
+        Optional<Cliente> cliente = clienteRepo.findById(id);
+        if(!cliente.isPresent()) throw new NotFoundException("Cliente",id);
+        return ResponseEntity.ok(cliente.get());
     }
 
     @Override   
@@ -35,20 +37,15 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public ResponseEntity<Cliente> borrar(Integer id) {
-        Optional<Cliente> c = clienteRepo.findById(id);
-        if(c.isPresent()){
-            clienteRepo.delete(c.get());
-        } 
-        return ResponseEntity.of(c);
+        Optional<Cliente> cliente = clienteRepo.findById(id);
+        if(!cliente.isPresent()) throw new NotFoundException("Cliente",id);
+        return ResponseEntity.ok(cliente.get());
     }
 
     @Override
     public ResponseEntity<Cliente> modificar(Integer id, Cliente c) {
         Optional<Cliente> cli = clienteRepo.findById(id);
-
-        if(cli.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
+        if(!cli.isPresent()) throw new NotFoundException("Cliente",id);
         else{
             
             Cliente updateResponse = cli.get();
@@ -62,13 +59,12 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     public ResponseEntity<List<Cliente>> buscarTodos(){
-
         return ResponseEntity.ok(clienteRepo.findAll());
     }
 
     public ResponseEntity<Double> getCtaCte(Integer id){
-        Optional<Cliente> c = clienteRepo.findById(id);
-        if(c.isPresent()) return ResponseEntity.ok(c.get().getMaximoCuentaCorriente());
-        else return ResponseEntity.notFound().build();
+        Optional<Cliente> cliente = clienteRepo.findById(id);
+        if(!cliente.isPresent()) throw new NotFoundException("Cliente",id);
+        return ResponseEntity.ok(cliente.get().getMaximoCuentaCorriente());
     }
 }
