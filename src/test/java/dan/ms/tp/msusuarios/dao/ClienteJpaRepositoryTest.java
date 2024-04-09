@@ -23,19 +23,17 @@ public class ClienteJpaRepositoryTest {
     @Autowired
     TestEntityManager testEntityManager;
 
+    private Cliente clienteMock;
     @BeforeEach
     void setUp(){
-
-
-        Cliente cliente = Cliente.builder()
+        this.clienteMock = Cliente.builder()
                             .correoElectronico("a@a.com")
                             .cuit("20123456789")
                             .habilitadoOnline(true)
                             .maximoCuentaCorriente(100.0)
                             .razonSocial("a")
                             .build();
-        testEntityManager.persist(cliente);
-
+        testEntityManager.persist(clienteMock);
     }
 
     @Test
@@ -44,15 +42,9 @@ public class ClienteJpaRepositoryTest {
         List<Cliente> clientes = clienteRepo.findByCuitJPQL("20123456789");
         List<Cliente> clientesInsertados = new ArrayList<>();
 
-        clientesInsertados.add((Cliente.builder()
-        .correoElectronico("a@a.com")
-        .cuit("20123456789")
-        .habilitadoOnline(true)
-        .maximoCuentaCorriente(100.0)
-        .id(1)
-        .razonSocial("a")
-        .build()));
+        this.clienteMock.setId(1);
+        clientesInsertados.add(this.clienteMock);
 
-        assertEquals(clientes, clientesInsertados);
+        assertEquals(clientesInsertados, clientes);
     }
 }
