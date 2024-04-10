@@ -39,14 +39,13 @@ public class ClienteServiceTest {
                             .razonSocial("a")
                             .build();
 
-        Mockito.when(clienteRepo.findById(1)).thenReturn(Optional.of(clienteMock));
-
-        Mockito.when(clienteRepo.findById(2)).thenThrow(new NotFoundException("Cliente", 2));
+        
     }
 
     @Test
     public void buscarPorIdFound(){
         Integer id = 1;
+        Mockito.when(clienteRepo.findById(id)).thenReturn(Optional.of(clienteMock));
 
         ResponseEntity<Cliente> clienteEncontrado = clienteService.buscarPorId(id);
 
@@ -56,6 +55,7 @@ public class ClienteServiceTest {
     @Test
     public void buscarPorIdNotFound(){
         Integer id = 2;
+        Mockito.when(clienteRepo.findById(id)).thenThrow(new NotFoundException("Cliente", 2));
 
         try {
             ResponseEntity<Cliente> clienteEncontrado = clienteService.buscarPorId(id);
